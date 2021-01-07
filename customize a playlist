@@ -1,0 +1,37 @@
+import spotipy
+import spotipy.util as util
+
+username = 'your user name'
+scope = 'user-library-read'
+scope = 'playlist-modify-public'
+
+CLIENT_ID = 'use yours'
+CLIENT_SECRET = 'use yours'
+
+playlist_id = 'use yours'
+
+token = util.prompt_for_user_token(username,
+                                   scope,
+                                   client_id=CLIENT_ID,
+                                   client_secret=CLIENT_SECRET,
+                                   redirect_uri='http://localhost/windows')
+
+sp = spotipy.Spotify(auth=token)
+
+def modify_playlist_tracks(playlist_id, track_modifier):
+    original_tracks = sp.user_playlist_tracks(username, playlist_id)
+    new_tracks = track_modifier(original_tracks)
+    remove_tracks = sp.user_playlist_remove_all_occurrences_of_tracks
+    remove_tracks(username, playlist_id, original_tracks)
+    sp.user_playlist_add_tracks(username, playlist_id, new_tracks)
+    
+original_tracks = sp.user_playlist_tracks(username, playlist_id)
+
+for track in original_tracks['tracks']["items"]:     # get a list of the track's ids 
+    tracks_ids.append(track['track']['id'])          #
+
+def track_modifier(tracks):
+    return reversed(original_tracks['tracks']["items"])
+    
+
+modify_playlist_tracks(playlist_id,track_modifier)
